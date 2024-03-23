@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Sansation";
+  src: url("/fonts/Sansation_Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Sansation-Bold";
+  src: url("/fonts/Sansation_Bold.ttf") format("truetype");
+}
