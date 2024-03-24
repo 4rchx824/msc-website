@@ -51,13 +51,13 @@ datasource db {
 //     sessions      Session[]
 // }
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+// model VerificationToken {
+//     identifier String
+//     token      String   @unique
+//     expires    DateTime
 
-    @@unique([identifier, token])
-}
+//     @@unique([identifier, token])
+// }
 
 model Contestent {
     cuid   String   @id @default(cuid())

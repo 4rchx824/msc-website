@@ -16,7 +16,11 @@ const navigation = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  
+
+  navigation.forEach((n) =>
+    n.href === pathname ? (n.current = true) : (n.current = false),
+  );
+
   return (
     <Disclosure as="nav">
       {({ open }: { open: boolean }) => (
@@ -42,7 +46,7 @@ export default function Navbar() {
                     height={100}
                     width={100}
                     alt="Logo"
-                    className="w-[64px] rounded-full sm:absolute sm:-top-2 sm:w-[128px] z-10"
+                    className="z-10 w-[64px] rounded-full sm:absolute sm:-top-2 sm:w-[128px]"
                   />
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -53,9 +57,9 @@ export default function Navbar() {
                         href={item.href}
                         className={cn([
                           item.current
-                            ? "!border-primary-blue !text-primary-blue !border-y-2"
-                            : "hover:border-primary-blue hover:border-y-2",
-                          "font-sansation border-y-2 border-transparent px-3 py-1 text-base",
+                            ? "!border-y-2 !border-primary-blue !text-primary-blue"
+                            : "hover:border-y-2 hover:border-primary-blue hover:text-primary-blue",
+                          "border-y-2 border-transparent px-3 py-1 font-sansation-bold text-base",
                         ])}
                         aria-current={item.current ? "page" : undefined}
                       >
@@ -77,8 +81,8 @@ export default function Navbar() {
                   href={item.href}
                   className={cn([
                     item.current
-                      ? "decoration-primary-blue text-primary-blue underline underline-offset-4"
-                      : "hover:decoration-primary-blue hover:underline hover:underline-offset-4",
+                      ? "text-primary-blue underline decoration-primary-blue underline-offset-4"
+                      : "hover:underline hover:decoration-primary-blue hover:underline-offset-4",
                     "block rounded-md px-3 py-2 text-base font-medium",
                   ])}
                   aria-current={item.current ? "page" : undefined}

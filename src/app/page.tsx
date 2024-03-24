@@ -1,8 +1,13 @@
 import Image from "next/image";
-import MSCNavbar from "./_components/navbar";
 import { api } from "@/trpc/server";
-import { Category } from "@prisma/client";
+import type { Category } from "@prisma/client";
 import { RocketIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Create T3 App",
@@ -11,6 +16,10 @@ export const metadata = {
 };
 
 export default async function Home() {
+  const competitions = await api.competition.findMany.query({
+    length: 3,
+  });
+
   const categories = (await api.category.findMany.query({
     length: 4,
   })) as Partial<Category>[];
@@ -34,20 +43,17 @@ export default async function Home() {
           alt="Stats"
           width={750}
           height={1000}
-          className="absolute w-full max-w-lg object-contain"
+          className="absolute w-full max-w-3xl object-contain"
         />
-        <h1 className="relative font-sansation-bold text-3xl sm:text-7xl">
+        <h1 className="relative font-sansation-bold text-3xl sm:text-[108px] sm:leading-[108px]">
           <span className="opacity-0">
-            SINGAPORE MEMORY <br />
-            SPORTS
+            SINGAPORE MEMORY <br /> SPORTS
           </span>
-          <span className="absolute inset-0 translate-x-[4px] text-center text-[#7089DF]">
-            SINGAPORE MEMORY <br />
-            SPORTS
+          <span className="absolute inset-0 translate-x-[6px] text-center text-[#7089DF]">
+            SINGAPORE MEMORY SPORTS
           </span>
           <span className="absolute inset-0 text-center text-white">
-            SINGAPORE MEMORY <br />
-            SPORTS
+            SINGAPORE MEMORY SPORTS
           </span>
         </h1>
       </div>
@@ -69,7 +75,7 @@ export default async function Home() {
               className="absolute -top-10 left-1/2 w-[75px] -translate-x-1/2 -rotate-2 sm:-top-12 sm:w-[100px]"
             />
           </div>
-          <div className="relative m-8 ml-4 flex flex-1 rotate-3 flex-col items-center space-y-12 bg-primary-blue p-4 font-sansation text-white shadow-md">
+          <div className="relative m-8 flex flex-1 flex-col items-center space-y-12 bg-primary-blue p-4 font-sansation text-white shadow-md sm:rotate-3">
             <Image
               className="absolute -left-8 -top-8"
               src={"/board/tape.png"}
@@ -84,7 +90,7 @@ export default async function Home() {
               width={100}
               alt="clip"
             />
-            <h1 className=" my-4 w-max bg-white px-6 py-2 text-center font-sansation-bold text-black sm:text-xl">
+            <h1 className="my-4 w-max bg-white px-6 py-2 text-center font-sansation-bold text-black sm:text-3xl">
               ABOUT SINGAPORE
               <br />
               MEMORY SPORTS
@@ -105,22 +111,126 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="flex p-8 bg-gray-200 space-x-8">
-        <div className="flex-1 bg-white rounded-lg p-4">
-          {categories.map((c) => {
-            if (c.name === "TBC") {
-              return (
-                <div key={c.cuid}>
-                  <RocketIcon size={48} />
-                  <h1 className="text-center">COMING SOON</h1>
-                </div>
-              );
-            }
+      <div className="flex flex-col space-y-8 bg-gray-200 p-8 sm:flex-row sm:space-x-8 sm:space-y-0">
+        <div className="flex rounded-3xl bg-white p-8">
+          <div className="flex w-max flex-col space-y-8">
+            <h1 className="font-sansation-bold text-3xl text-primary-blue underline decoration-primary-blue underline-offset-8">
+              Records
+            </h1>
 
-            return <div key={c.cuid}>{c.name}</div>;
-          })}
+            <div className="grid w-max grid-cols-1 place-items-center gap-8 self-center sm:grid-cols-2">
+              {categories.map((c) => (
+                <button
+                  key={c.cuid}
+                  className={cn([
+                    "flex h-[275px] w-[275px] flex-col items-center justify-center space-y-4 rounded-3xl border py-8",
+                    c.name !== "TBC"
+                      ? "cursor-pointer shadow-lg transition-shadow hover:shadow-xl"
+                      : "cursor-default ",
+                  ])}
+                >
+                  {c.img_url ? (
+                    <Image
+                      alt="Icon"
+                      className="h-[150px] w-[150px] object-contain object-center"
+                      src={c.img_url ?? ""}
+                      width={200}
+                      height={200}
+                    />
+                  ) : (
+                    <RocketIcon
+                      width={150}
+                      height={150}
+                      className="text-gray-300"
+                    />
+                  )}
+                  <h1
+                    className={cn([
+                      "font-sansation-bold text-3xl px-8 w-full truncate overflow-ellipsis",
+                      c.name === "TBC" ? "text-gray-400" : "",
+                    ])}
+                  >
+                    {c.name}
+                  </h1>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex-1 bg-white rounded-lg p-4"></div>
+        <div className="flex-grow rounded-3xl bg-white p-8">
+          <div className="flex h-full flex-col justify-between space-y-8">
+            <h1 className="font-sansation-bold text-3xl text-primary-blue underline decoration-primary-blue underline-offset-8">
+              Past Competitions
+            </h1>
+            <div className="h-full">
+              {competitions.length === 0 && (
+                <h1 className="text-lg">There are no past competitions.</h1>
+              )}
+            </div>
+            <Link
+              href={"/"}
+              className="font-sansation-bold text-xl text-primary-blue"
+            >
+              View more
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center space-y-8 bg-primary-blue py-8 sm:flex-row sm:items-start sm:space-x-8 sm:space-y-0">
+        <div className="flex flex-col space-y-4 font-sansation">
+          <h1 className="font-sansation-bold text-5xl text-white">CONTACT</h1>
+          <h1 className="bg-white p-2 text-xl text-primary-blue">QUESTIONS?</h1>
+          <h1 className="bg-white p-2 text-xl text-primary-blue">FEEDBACK?</h1>
+        </div>
+        <form
+          className="flex w-full max-w-sm flex-col space-y-4 bg-white p-4 sm:max-w-lg"
+          action="mailto:sp_msc@ichat.sp.edu.sg"
+          method="post"
+        >
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="email" className="text-lg">
+              Email
+            </Label>
+            <Input
+              type="email"
+              id="email"
+              className="bg-gray-300 text-xl !ring-0 !ring-offset-0"
+            />
+          </div>
+
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="subject" className="text-lg">
+              Subject
+            </Label>
+            <Input
+              type="text"
+              id="subject"
+              className="bg-gray-300 text-xl !ring-0 !ring-offset-0"
+            />
+          </div>
+
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="message" className="text-lg">
+              Message
+            </Label>
+            <Textarea
+              id="message"
+              className="resize-none bg-gray-300 text-xl !ring-0 !ring-offset-0"
+            />
+          </div>
+
+          <div className="flex w-full items-center justify-end space-x-2">
+            <Button type="reset" variant="outline" className="text-lg">
+              Reset
+            </Button>
+            <Button
+              className="bg-primary-blue text-lg hover:bg-primary-blue hover:opacity-90"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

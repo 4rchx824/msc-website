@@ -21,10 +21,10 @@ const config = {
     extend: {
       backgroundImage: {
         hero: 'url("/bg.svg")',
-        "board-texture": "url('/board/texture.jpeg')"
+        "board-texture": "url('/board/texture.jpeg')",
       },
       colors: {
-        "primary-blue": "#2563eb",
+        "primary-blue": "#4169E1",
       },
       keyframes: {
         "accordion-down": {
