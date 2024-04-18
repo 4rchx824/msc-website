@@ -52,7 +52,8 @@ export const recordRouter = createTRPCRouter({
               },
               points: r._sum.points!,
               contestent_id: r.contestent_id,
-              competition_id: r.competition_id,
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              competition_id: r.competition_id as string,
             };
           }),
         ];
