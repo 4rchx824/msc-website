@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 
@@ -20,9 +19,24 @@ export const competitionRouter = createTRPCRouter({
       if (limit) {
         records = ctx.db.competition.findMany({
           take: limit,
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
         });
       } else {
-        records = ctx.db.competition.findMany();
+        records = ctx.db.competition.findMany({
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
       }
 
       return records;
@@ -38,12 +52,19 @@ export const competitionRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const page = input.page - 1;
       const result_count = 6;
-      
+
       const results = await ctx.db.competition.findMany({
         where: {
           categoryId: input.category_id,
           name: {
             contains: input.query,
+          },
+        },
+        include: {
+          category: {
+            select: {
+              name: true,
+            },
           },
         },
         skip: page * result_count,
@@ -53,6 +74,36 @@ export const competitionRouter = createTRPCRouter({
         },
       });
 
-      return results;
+      const count = await ctx.db.competition.count({
+        where: {
+          categoryId: input.category_id,
+          name: {
+            contains: input.query,
+          },
+        },
+      });
+
+      const results_with_count = {
+        results,
+        count: count,
+      };
+
+      return results_with_count;
+    }),
+
+  findOne: publicProcedure
+    .input(
+      z.object({
+        competitonId: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const competition = await ctx.db.competition.findUnique({
+        where: {
+          cuid: input.competitonId,
+        },
+      });
+
+      return competition;
     }),
 });

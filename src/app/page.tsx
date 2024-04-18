@@ -16,11 +16,11 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const competitions = await api.competition.findMany.query({
+  const competitions = await api.competitions.findMany.query({
     length: 3,
   });
 
-  const categories = (await api.category.findMany.query({
+  const categories = (await api.categories.findMany.query({
     length: 4,
   })) as Partial<Category>[];
 
