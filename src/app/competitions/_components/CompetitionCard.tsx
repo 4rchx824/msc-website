@@ -3,7 +3,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { CompetitionWithCategory } from "../page";
+import type { CompetitionWithCategory } from "../page";
 import Link from "next/link";
 
 type Props = {

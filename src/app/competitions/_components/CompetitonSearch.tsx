@@ -1,56 +1,33 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import type { Category, Competition } from "@prisma/client";
-import React, {
-  FormEvent,
-  FormEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import type { Category } from "@prisma/client";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import debounce from "lodash/debounce";
 import CompetitionCard from "./CompetitionCard";
 
-import type {
-  CompetitionSearchOptions,
-  CompetitionSearchResults,
-} from "../page";
+import type { CompetitionSearchOptions } from "../page";
 import CompetitionResultPagination from "../../_components/CustomPagination";
 
 type Props = {
   categories: Category[];
-  competitions: CompetitionSearchResults;
   searchOptions: CompetitionSearchOptions;
 };
 
-const CompetitonSearch = ({
-  categories,
-  competitions,
-  searchOptions,
-}: Props) => {
-  const ctx = api.useUtils();
+const CompetitonSearch = ({ categories, searchOptions }: Props) => {
   const [search, setSearch] = useState({
     categoryId: searchOptions.category_id,
     page: searchOptions.page,
     query: searchOptions.query,
   });
 
-  const [results, setResults] = useState(competitions);
-
-  const { data, refetch, isFetching } = api.competitions.search.useQuery(
-    {
-      category_id: search.categoryId!,
-      page: search.page,
-      query: search.query,
-    },
-    {
-      enabled: false,
-      initialData: results,
-    },
-  );
+  const { data, isLoading } = api.competitions.search.useQuery({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    category_id: search.categoryId!,
+    page: search.page,
+    query: search.query,
+  });
 
   const setCategoryId = (id: string) => {
     setSearch({
@@ -72,36 +49,6 @@ const CompetitonSearch = ({
       [e.target.name]: e.target.value,
     });
   };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    void refetch();
-  };
-
-  const debouncedSearch = useCallback(
-    debounce(async () => {
-      await refetch();
-      setResults(data);
-    }, 1000),
-    [],
-  );
-
-  useEffect(() => {
-    debouncedSearch();
-  }, [search.query]);
-
-  useEffect(() => {
-    void refetch();
-  }, [search.page]);
-
-  useEffect(() => {
-    setSearch({
-      ...search,
-      categoryId: search.categoryId,
-      page: searchOptions.page,
-    });
-    void refetch();
-  }, [search.categoryId]);
 
   return (
     <div className="flex w-full max-w-5xl flex-col space-y-8">
@@ -133,10 +80,7 @@ const CompetitonSearch = ({
       </div>
 
       <div className="mt-12 flex flex-col items-center space-y-4 rounded-xl bg-white p-4">
-        <form
-          className="flex w-full items-center justify-center rounded-md border px-2"
-          onSubmit={handleSubmit}
-        >
+        <form className="flex w-full items-center justify-center rounded-md border px-2">
           <SearchIcon size={24} className="stroke-1" />
           <Input
             disabled={categories.length === 0}
@@ -148,9 +92,9 @@ const CompetitonSearch = ({
           />
         </form>
 
-        {isFetching && <h1 className="py-12">Loading...</h1>}
+        {isLoading && <h1 className="py-12">Loading...</h1>}
 
-        {!isFetching && (
+        {!isLoading && (
           <div className="grid grid-cols-1 gap-9 sm:grid-cols-3">
             {(data?.results ?? []).map((c) => (
               <CompetitionCard competiton={c} key={c.cuid} />
@@ -158,11 +102,11 @@ const CompetitonSearch = ({
           </div>
         )}
 
-        {data.results.length === 0 && (
+        {data && data.results.length === 0 && (
           <h1 className="py-12">No competitions found</h1>
         )}
 
-        {data.results.length > 0 && (
+        {data && data.results.length > 0 && (
           <CompetitionResultPagination
             per_page={6}
             count={data.count}

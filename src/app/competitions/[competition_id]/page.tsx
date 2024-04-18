@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/trpc/react";
 import type { Discipline } from "@prisma/client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
 import RecordFilter from "./_components/RecordFilter";
 import { ChevronLeft } from "lucide-react";
@@ -9,7 +9,6 @@ import Link from "next/link";
 import RecordResults from "./_components/RecordResults";
 
 const Page = () => {
-  const router = useRouter();
   const { competition_id } = useParams();
 
   const { data: competition, isLoading } = api.competitions.findOne.useQuery({

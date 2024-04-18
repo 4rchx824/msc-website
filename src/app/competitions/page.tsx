@@ -22,10 +22,6 @@ export type CompetitionSearchOptions = {
 
 const Page = async () => {
   let categories = [] as Category[];
-  let competitions = {
-    count: 0,
-    results: [],
-  } as CompetitionSearchResults;
 
   let searchOptions = {
     category_id: "",
@@ -44,17 +40,11 @@ const Page = async () => {
       page: initial_page,
       query: "",
     };
-
-    competitions = await api.competitions.search.query(searchOptions);
   }
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col items-center bg-[#E7E7E7]">
-      <CompetitonSearch
-        categories={categories}
-        competitions={competitions}
-        searchOptions={searchOptions}
-      />
+      <CompetitonSearch categories={categories} searchOptions={searchOptions} />
     </div>
   );
 };

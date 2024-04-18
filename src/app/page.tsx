@@ -33,8 +33,6 @@ export default async function Home() {
     }
   }
 
-  console.log(categories);
-
   return (
     <div className="min-h-[100dvh] w-full">
       <div className="relative flex min-h-screen items-center justify-center bg-hero bg-cover bg-center">
@@ -146,7 +144,7 @@ export default async function Home() {
                   )}
                   <h1
                     className={cn([
-                      "font-sansation-bold text-3xl px-8 w-full truncate overflow-ellipsis",
+                      "w-full truncate overflow-ellipsis px-8 font-sansation-bold text-3xl",
                       c.name === "TBC" ? "text-gray-400" : "",
                     ])}
                   >

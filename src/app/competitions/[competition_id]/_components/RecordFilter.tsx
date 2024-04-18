@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import type { Competition, Discipline } from "@prisma/client";
-import { ChevronLeft } from "lucide-react";
 
 type Props = {
   competition: Competition | null | undefined;
@@ -22,7 +21,7 @@ const RecordFilter = ({
           {competition?.name}
         </h1>
 
-        <div className="flex flex-wrap justify-center items-center space-x-2 pt-4">
+        <div className="flex flex-wrap items-center justify-center space-x-2 pt-4">
           <button
             onClick={() =>
               setDiscipline({

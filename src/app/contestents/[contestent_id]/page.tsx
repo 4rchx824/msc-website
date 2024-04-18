@@ -2,7 +2,7 @@
 import type { Discipline } from "@/server/api/routers/contestent";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import React, { PureComponent } from "react";
+import React from "react";
 import {
   Radar,
   RadarChart,
@@ -11,12 +11,6 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
-
-type ChartData = {
-  level: number;
-  points: number;
-  discipline: Discipline;
-};
 
 const Page = () => {
   const { contestent_id }: { contestent_id: string } = useParams();
@@ -59,7 +53,6 @@ const Page = () => {
                   fontWeight: "bold",
                   fontFamily: "sansation",
                 }}
-                
               />
               <PolarRadiusAxis
                 domain={[0, 5]}
