@@ -100,7 +100,7 @@ model Competition {
 
 model Record {
   cuid      String @id @default(cuid())
-  raw_score Int    @default(0)
+  raw_score Int    
   time      Int?
   points    Float
 
