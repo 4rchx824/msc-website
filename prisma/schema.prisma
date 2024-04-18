@@ -99,8 +99,10 @@ model Competition {
 }
 
 model Record {
-  cuid   String @id @default(cuid())
-  points Float
+  cuid      String @id @default(cuid())
+  raw_score Int    @default(0)
+  time      Int?
+  points    Float
 
   discipline_id String
   discipline    Discipline @relation(fields: [discipline_id], references: [cuid])
