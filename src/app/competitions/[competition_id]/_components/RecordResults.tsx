@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import RecordRow from "./RecordRow";
-import CustomPagination from "@/app/_components/CustomPagination";
+import CustomPagination from "@/components/shared/CustomPagination";
 
 type Props = {
   discipline: Discipline;

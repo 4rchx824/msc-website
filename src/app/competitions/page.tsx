@@ -3,6 +3,8 @@ import React from "react";
 import CompetitonSearch from "./_components/CompetitonSearch";
 import type { Category, Competition } from "@prisma/client";
 
+export const dynamic = "force-dynamic";
+
 export type CompetitionWithCategory = Competition & {
   category: {
     name: string;

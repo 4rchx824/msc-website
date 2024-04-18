@@ -1,7 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";

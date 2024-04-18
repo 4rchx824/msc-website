@@ -8,7 +8,7 @@ import { SearchIcon } from "lucide-react";
 import CompetitionCard from "./CompetitionCard";
 
 import type { CompetitionSearchOptions } from "../page";
-import CompetitionResultPagination from "../../_components/CustomPagination";
+import CompetitionResultPagination from "@/components/shared/CustomPagination";
 
 type Props = {
   categories: Category[];

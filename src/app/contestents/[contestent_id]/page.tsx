@@ -1,5 +1,4 @@
 "use client";
-import type { Discipline } from "@/server/api/routers/contestent";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
 import React from "react";
