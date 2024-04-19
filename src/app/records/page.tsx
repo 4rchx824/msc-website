@@ -1,6 +1,8 @@
 import { api } from "@/trpc/server";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const Page = async () => {
   const data = await api.records.findNational.query();
 
