@@ -1,5 +1,5 @@
 import { api } from "@/trpc/react";
-import type { Competition, Discipline } from "@prisma/client";
+import type { Competition } from "@prisma/client";
 import React, { useEffect } from "react";
 
 import {
