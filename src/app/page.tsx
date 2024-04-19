@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import dayjs from "dayjs";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Create T3 App",
@@ -162,13 +164,41 @@ export default async function Home() {
             <h1 className="font-sansation-bold text-3xl text-primary-blue underline decoration-primary-blue underline-offset-8">
               Past Competitions
             </h1>
-            <div className="h-full">
+            <div className="h-full space-y-8">
               {competitions.length === 0 && (
                 <h1 className="text-lg">There are no past competitions.</h1>
               )}
+              {competitions.map((c) => (
+                <Link
+                  key={c.cuid}
+                  className="flex w-full space-x-4"
+                  href={`/competitions/${c.cuid}`}
+                >
+                  <Image
+                    src={c.img_url ?? "/no_photo.jpg"}
+                    alt="event photo"
+                    width={400}
+                    height={200}
+                    className="h-[180px] w-[315px] rounded-lg object-cover"
+                  />
+                  <div className="flex flex-col space-y-4">
+                    <h1 className="font-sansation-bold text-xl text-primary-blue">
+                      {c.name}
+                    </h1>
+                    <div className="flex space-x-4">
+                      <p className="font-sansation-bold italic">
+                        {dayjs(c.date).format("DD MMM YYYY")}
+                      </p>{" "}
+                      <Badge className="w-max bg-blue-200 text-blue-900 hover:bg-blue-100">
+                        #{c.category.name}
+                      </Badge>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
             <Link
-              href={"/"}
+              href={"/competitions"}
               className="font-sansation-bold text-xl text-primary-blue"
             >
               View more

@@ -1,11 +1,16 @@
 import { cn } from "@/lib/utils";
 import type { Competition, Discipline } from "@prisma/client";
 
+export type OmittedDiscipline = Omit<
+  Discipline,
+  "competition_id" | "category_id"
+>;
+
 type Props = {
   competition: Competition | null | undefined;
-  disciplines: Discipline[] | null | undefined;
-  discipline: Discipline;
-  setDiscipline: React.Dispatch<React.SetStateAction<Discipline>>;
+  disciplines: OmittedDiscipline[] | null | undefined;
+  discipline: OmittedDiscipline;
+  setDiscipline: React.Dispatch<React.SetStateAction<OmittedDiscipline>>;
 };
 
 const RecordFilter = ({
@@ -25,8 +30,6 @@ const RecordFilter = ({
           <button
             onClick={() =>
               setDiscipline({
-                category_id: "OVERALL",
-                competition_id: "OVERALL",
                 cuid: "OVERALL",
                 name: "OVERALL",
               })

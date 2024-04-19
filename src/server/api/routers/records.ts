@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import type { OverallRecord } from "@/app/competitions/[competition_id]/_components/RecordRow";
 
 export const recordRouter = createTRPCRouter({
@@ -87,7 +84,7 @@ export const recordRouter = createTRPCRouter({
         skip: page * result_count,
         take: result_count,
         orderBy: {
-          points: "desc",
+          raw_score: "desc",
         },
       });
 
@@ -105,4 +102,13 @@ export const recordRouter = createTRPCRouter({
 
       return results_with_count;
     }),
+  findNational: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.db.$queryRaw`
+      SELECT DISTINCT("cd"."discipline_id") FROM "CompetitionDiscipline" "cd"
+    `;
+
+    console.log(data);
+
+    return {};
+  }),
 });

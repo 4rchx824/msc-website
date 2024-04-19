@@ -77,12 +77,23 @@ model Discipline {
   cuid String @id @default(cuid())
   name String
 
-  competition_id String?
-  competition    Competition? @relation(fields: [competition_id], references: [cuid])
+  // competition_id String?
+  // competition    Competition? @relation(fields: [competition_id], references: [cuid])
 
-  category_id String
-  category    Category @relation(fields: [category_id], references: [cuid])
-  Record      Record[]
+  category_id           String
+  category              Category                @relation(fields: [category_id], references: [cuid])
+  Record                Record[]
+  CompetitionDiscipline CompetitionDiscipline[]
+}
+
+model CompetitionDiscipline {
+  competition_id String
+  competition    Competition @relation(fields: [competition_id], references: [cuid])
+
+  discipline_id String
+  discipline    Discipline @relation(fields: [discipline_id], references: [cuid])
+
+  @@id([competition_id, discipline_id])
 }
 
 model Competition {
@@ -94,13 +105,14 @@ model Competition {
   category   Category @relation(fields: [categoryId], references: [cuid])
   categoryId String
 
-  Record     Record[]
-  Discipline Discipline[]
+  Record                Record[]
+  CompetitionDiscipline CompetitionDiscipline[]
+  // Discipline            Discipline[]
 }
 
 model Record {
   cuid      String @id @default(cuid())
-  raw_score Int    
+  raw_score Int
   time      Int?
   points    Float
 

@@ -1,9 +1,10 @@
 "use client";
 import { api } from "@/trpc/react";
-import type { Discipline } from "@prisma/client";
 import { useParams } from "next/navigation";
-import React from "react";
-import RecordFilter from "./_components/RecordFilter";
+import React, { useEffect } from "react";
+import RecordFilter, {
+  type OmittedDiscipline,
+} from "./_components/RecordFilter";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import RecordResults from "./_components/RecordResults";
@@ -19,9 +20,7 @@ const Page = () => {
     competitionId: competition?.cuid ?? "",
   });
 
-  const [discipline, setDiscipline] = React.useState<Discipline>({
-    category_id: "OVERALL",
-    competition_id: "OVERALL",
+  const [discipline, setDiscipline] = React.useState<OmittedDiscipline>({
     cuid: "OVERALL",
     name: "OVERALL",
   });

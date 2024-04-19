@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import type { Discipline } from "@prisma/client";
 
 export const disciplineRouter = createTRPCRouter({
   findMany: publicProcedure
@@ -13,12 +11,40 @@ export const disciplineRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const disciplines = await ctx.db.discipline.findMany({
+      // const disciplines = await ctx.db.discipline.findMany({
+      //   where: {
+      //     competition_id: input.competitionId,
+      //   },
+      // });
+
+      // const data: Omit<Discipline, "competition_id" | "category_id">[] =
+      //   await ctx.db.$queryRaw`
+      //   SELECT
+      //     "d"."cuid",
+      //     "d"."name"
+      //   FROM
+      //     "Record" "r",
+      //     "Discipline" "d"
+      //   WHERE
+      //     "r"."competition_id" = ${input.competitionId}
+      //     AND "r"."discipline_id" = "d"."cuid"
+      //   GROUP BY
+      //     "r"."discipline_id",
+      //     "d"."name",
+      //     "d"."cuid"
+      // `;
+
+      const disciplines = await ctx.db.competitionDiscipline.findMany({
         where: {
           competition_id: input.competitionId,
         },
+        select: {
+          discipline: true,
+        },
       });
-      
-      return disciplines;
+
+      const sorted_disciplines = disciplines.map((d) => d.discipline);
+
+      return sorted_disciplines;
     }),
 });

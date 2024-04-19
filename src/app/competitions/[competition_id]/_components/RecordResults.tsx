@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/table";
 import RecordRow from "./RecordRow";
 import CustomPagination from "@/components/shared/CustomPagination";
+import type { OmittedDiscipline } from "./RecordFilter";
 
 type Props = {
-  discipline: Discipline;
+  discipline: OmittedDiscipline;
   competition: Competition | null | undefined;
 };
 const RecordResult = ({ discipline, competition }: Props) => {
@@ -66,6 +67,7 @@ const RecordResult = ({ discipline, competition }: Props) => {
                 index={index}
                 page={page}
                 per_page={per_page}
+                discipline_id={discipline.cuid}
               />
             ))}
           </TableBody>

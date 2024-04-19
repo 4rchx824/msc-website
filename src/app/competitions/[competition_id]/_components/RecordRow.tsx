@@ -17,9 +17,11 @@ type Props = {
   index: number;
   page: number;
   per_page: number;
+  discipline_id: string;
 };
 
-const RecordRow = ({ record, index, page, per_page }: Props) => {
+const RecordRow = ({ record, index, page, per_page, discipline_id }: Props) => {
+  record = record as Record & { contestent: Contestent };
   const starting = (page - 1) * per_page;
   const rank = starting + index + 1;
   return (
@@ -50,7 +52,7 @@ const RecordRow = ({ record, index, page, per_page }: Props) => {
         </Link>
       </TableCell>
       <TableCell className="text-center font-sansation">
-        {record.points}
+        {discipline_id === "OVERALL" ? record.points : record.raw_score}
       </TableCell>
     </TableRow>
   );
