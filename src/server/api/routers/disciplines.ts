@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import type { Discipline } from "@prisma/client";
 
 export const disciplineRouter = createTRPCRouter({
   findMany: publicProcedure

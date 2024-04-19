@@ -3,6 +3,22 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import type { OverallRecord } from "@/app/competitions/[competition_id]/_components/RecordRow";
 
+export type DisciplineWithRecord = {
+  cuid: string;
+  name: string;
+  raw_score: number;
+  time: number | null | undefined;
+  points: number;
+  contestent: {
+    cuid: string;
+    name: string;
+  };
+  competition: {
+    cuid: string;
+    name: string;
+  };
+};
+
 export const recordRouter = createTRPCRouter({
   findMany: publicProcedure
     .input(
@@ -103,12 +119,68 @@ export const recordRouter = createTRPCRouter({
       return results_with_count;
     }),
   findNational: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.db.$queryRaw`
-      SELECT DISTINCT("cd"."discipline_id") FROM "CompetitionDiscipline" "cd"
-    `;
+    const disciplines = await ctx.db.competitionDiscipline.findMany({
+      distinct: ["discipline_id"],
+      include: {
+        discipline: true,
+      },
+      orderBy: {
+        competition: {
+          name: "asc",
+        },
+      },
+    });
 
-    console.log(data);
+    const sorted_disciplines = disciplines.map((d) => {
+      return {
+        cuid: d.discipline.cuid,
+        name: d.discipline.name,
+      };
+    });
 
-    return {};
+    const national_record = await Promise.all(
+      sorted_disciplines.map(async (d) => {
+        const record = await ctx.db.record.findFirst({
+          where: {
+            discipline_id: d.cuid,
+          },
+          orderBy: {
+            points: "desc",
+          },
+          take: 1,
+          include: {
+            contestent: true,
+            competition: true,
+          },
+        });
+
+        return {
+          ...d,
+          ...record,
+        };
+      }),
+    );
+
+    const discipline_with_records: DisciplineWithRecord[] = national_record.map(
+      (r) => {
+        return {
+          cuid: r.cuid,
+          name: r.name,
+          raw_score: r.raw_score ?? 0,
+          time: r.time ?? null,
+          points: r.points ?? 0,
+          contestent: {
+            cuid: r.contestent?.cuid ?? "NA",
+            name: r.contestent?.name ?? "NA",
+          },
+          competition: {
+            cuid: r.competition?.cuid ?? "NA",
+            name: r.competition?.name ?? "NA",
+          },
+        };
+      },
+    );
+
+    return discipline_with_records;
   }),
 });

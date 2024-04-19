@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React from "react";
 import RecordFilter, {
   type OmittedDiscipline,
 } from "./_components/RecordFilter";
@@ -10,10 +10,10 @@ import Link from "next/link";
 import RecordResults from "./_components/RecordResults";
 
 const Page = () => {
-  const { competition_id } = useParams();
+  const { competition_id }: { competition_id: string } = useParams();
 
   const { data: competition, isLoading } = api.competitions.findOne.useQuery({
-    competitonId: competition_id as string,
+    competitonId: competition_id,
   });
 
   const { data: disciplines } = api.disciplines.findMany.useQuery({
