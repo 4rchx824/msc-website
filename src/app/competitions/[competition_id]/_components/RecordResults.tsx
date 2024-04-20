@@ -54,8 +54,19 @@ const RecordResult = ({ discipline, competition }: Props) => {
                 Rank
               </TableHead>
               <TableHead className="font-sansation-bold">Competitor</TableHead>
+              {discipline.cuid !== "OVERALL" && (
+                <>
+                  <TableHead className="text-center font-sansation-bold">
+                    Raw Score
+                  </TableHead>
+                  <TableHead className="text-center font-sansation-bold">
+                    Time
+                  </TableHead>
+                </>
+              )}
+
               <TableHead className="text-center font-sansation-bold">
-                Score
+                Points
               </TableHead>
             </TableRow>
           </TableHeader>

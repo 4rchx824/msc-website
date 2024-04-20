@@ -26,18 +26,14 @@ const Page = async () => {
           <TableCaption>National Records for all Disciplines</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-max font-sansation-bold text-black">
+              <TableHead className="w-max font-sansation-bold">
                 Discipline
               </TableHead>
-              <TableHead className="w-max font-sansation-bold text-black">
+              <TableHead className="w-max font-sansation-bold">
                 Competitor
               </TableHead>
-              <TableHead className="font-sansation-bold text-black">
-                Score
-              </TableHead>
-              <TableHead className="font-sansation-bold text-black">
-                Competition
-              </TableHead>
+              <TableHead className="font-sansation-bold">Score</TableHead>
+              <TableHead className="font-sansation-bold">Competition</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

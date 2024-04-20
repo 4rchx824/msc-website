@@ -12,7 +12,7 @@ function RecordRow({ record }: Props) {
   return (
     <TableRow>
       <TableCell className="font-sansation text-primary-blue underline">
-        <Link href={`/`}>{record.name}</Link>
+        <Link href={`/records/${record.cuid}`}>{record.name}</Link>
       </TableCell>
       <TableCell
         className={cn([

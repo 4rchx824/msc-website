@@ -46,4 +46,26 @@ export const disciplineRouter = createTRPCRouter({
 
       return sorted_disciplines;
     }),
+  getRecords: publicProcedure
+    .input(
+      z.object({
+        discipline_id: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const records = await ctx.db.record.findMany({
+        where: {
+          discipline_id: input.discipline_id,
+        },
+        include: {
+          contestent: true,
+          competition: true,
+        },
+        orderBy: {
+          points: "desc",
+        },
+      });
+      
+      return records;
+    }),
 });

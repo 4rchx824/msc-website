@@ -5,12 +5,13 @@ import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const navigation = [
   { name: "About Us", href: "/", current: true },
   { name: "Competitions", href: "/competitions", current: false },
   { name: "Records", href: "/records", current: false },
-  { name: "Contact Us", href: "#contact-us", current: false },
+  { name: "Contact Us", href: "/#contact", current: false },
 ];
 
 export default function Navbar() {
@@ -51,7 +52,7 @@ export default function Navbar() {
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   <div className="flex space-x-6">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
                         href={item.href}
                         className={cn([
@@ -63,7 +64,7 @@ export default function Navbar() {
                         aria-current={item.current ? "page" : undefined}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>

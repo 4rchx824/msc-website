@@ -155,8 +155,9 @@ export const recordRouter = createTRPCRouter({
         });
 
         return {
-          ...d,
+          name: d.name,
           ...record,
+          cuid: d.cuid,
         };
       }),
     );
@@ -183,4 +184,19 @@ export const recordRouter = createTRPCRouter({
 
     return discipline_with_records;
   }),
+  findOne: publicProcedure
+    .input(
+      z.object({
+        disciplineId: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const discipline = await ctx.db.discipline.findUnique({
+        where: {
+          cuid: input.disciplineId,
+        },
+      });
+
+      return discipline;
+    }),
 });
