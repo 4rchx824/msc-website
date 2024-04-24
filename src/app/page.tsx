@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
 import ContactUs from "./_components/ContactUs";
 
+export type PartialCategory = Partial<Category>;
+
 export const dynamic = "force-dynamic";
 
 export const metadata = {
@@ -21,9 +23,9 @@ export default async function Home() {
     length: 3,
   });
 
-  const categories = (await api.categories.findMany.query({
+  const categories: PartialCategory[] = await api.categories.findMany.query({
     length: 4,
-  })) as Partial<Category>[];
+  });
 
   if (categories.length < 4) {
     for (let i = categories.length; i < 4; i++) {

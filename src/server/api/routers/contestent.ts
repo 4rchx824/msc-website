@@ -14,6 +14,19 @@ export const enum Difficulty {
   Beginner = "Beginner",
 }
 
+export type PersonalRecord = {
+  cuid: string;
+  discipline_name: string;
+  discipline_id: string;
+  points: number;
+  raw_score: number;
+  time: number | null | undefined;
+  competition_id: string;
+  competition_name: string;
+  rank: number;
+  contestent_id: string;
+};
+
 export const contestentRouter = createTRPCRouter({
   findOne: publicProcedure
     .input(
@@ -29,6 +42,80 @@ export const contestentRouter = createTRPCRouter({
       });
 
       return contestent;
+    }),
+  getRecords: publicProcedure
+    .input(
+      z.object({
+        contestentId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const disciplines = await ctx.db.competitionDiscipline.findMany({
+        include: {
+          discipline: true,
+        },
+        orderBy: {
+          discipline: {
+            name: "asc",
+          },
+        },
+      });
+
+      const records = await Promise.all(
+        disciplines.map(async (discipline) => {
+          return await ctx.db.record.findFirst({
+            where: {
+              contestent_id: input.contestentId,
+              discipline_id: discipline.discipline.cuid,
+            },
+            orderBy: {
+              points: "desc",
+            },
+            include: {
+              contestent: true,
+              competition: true,
+              discipline: true,
+            },
+          });
+        }),
+      );
+
+      const records_with_rank = await Promise.all(
+        records.map(async (record) => {
+          const rank: [PersonalRecord] = await ctx.db.$queryRaw`
+          SELECT
+            *
+          FROM
+            (
+              SELECT 
+                "r"."cuid",
+                "d"."name" as "discipline_name",
+                "d"."cuid" as "discipline_id",
+                "r"."points",
+                "r"."raw_score",
+                "r"."time",
+                "r"."competition_id",
+                "co"."name" as "competition_name",
+                ROW_NUMBER() OVER (ORDER BY "r"."points" DESC, "c"."name" ASC) as "rank",
+                "r"."contestent_id"
+              FROM 
+                "Record" "r", "Discipline" "d", "Contestent" "c", "Competition" "co"
+              WHERE 
+                "r"."discipline_id" = "d"."cuid"
+                AND "r"."contestent_id" = "c"."cuid"
+                AND "r"."competition_id" = "co"."cuid"
+                AND "d"."cuid" = ${record?.discipline_id}
+                AND "r"."competition_id" = ${record?.competition_id}
+            ) as "rankings"
+          WHERE 
+            "rankings"."contestent_id" = ${record?.contestent_id}
+        `;
+
+          return rank[0];
+        }),
+      );
+
+      return records_with_rank;
     }),
   getChartData: publicProcedure
     .input(
@@ -98,10 +185,9 @@ export const contestentRouter = createTRPCRouter({
         }
       };
 
-      const raw: { Points: number; Discipline: string }[] = await ctx.db
-        .$queryRaw`
+      const raw: { Raw: number; Discipline: string }[] = await ctx.db.$queryRaw`
         SELECT 
-          MAX(r."points") as "Points",
+          MAX(r."raw_score") as "Raw",
           d."name" as "Discipline"
         FROM 
           "Record" "r", "Discipline" "d" 
@@ -114,26 +200,40 @@ export const contestentRouter = createTRPCRouter({
 
       const data = raw.map((record) => ({
         level: determine_level(
-          record.Points,
+          record.Raw,
           record.Discipline as Discipline,
           Difficulty.Beginner,
         ),
-        points: record.Points,
+        points: record.Raw,
         discipline: record.Discipline,
       }));
 
-      console.log(data);
+      if (data.length === 0) {
+        return Object.keys(rankings[Difficulty.Beginner].Ranking).map(
+          (discipline) => ({
+            level: 0,
+            points: 0,
+            discipline: discipline as Discipline,
+          }),
+        );
+      }
 
-      // data.forEach((record) => {
-      //   console.log(
-      //     determine_level(
-      //       record.points,
-      //       record.discipline.name as Discipline,
-      //       Difficulty.Beginner,
-      //     ),
-      //   );
-      // });
+      const data_with_missing_disciplines = Object.keys(
+        rankings[Difficulty.Beginner].Ranking,
+      ).map((discipline) => {
+        const found = data.find((record) => record.discipline === discipline);
 
-      return data;
+        if (found) {
+          return found;
+        }
+
+        return {
+          level: 0,
+          points: 0,
+          discipline: discipline as Discipline,
+        };
+      });
+
+      return data_with_missing_disciplines;
     }),
 });

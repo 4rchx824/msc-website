@@ -6,8 +6,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@/server/api/root";
 import Image from "next/image";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type Record = RouterOutput["disciplines"]["getRecords"][0];
+type Record = inferRouterOutputs<AppRouter>["disciplines"]["getRecords"][0];
 
 type Props = {
   record: Record;
@@ -65,7 +64,7 @@ function RecordRow({ record, index }: Props) {
           </Link>
         )}
       </TableCell>
-      <TableCell className="font-sansation-bold">{record.points}</TableCell>
+      <TableCell className="font-sansation-bold">{record.raw_score}</TableCell>
       <TableCell
         className={cn([
           record.competition?.cuid === "NA"
