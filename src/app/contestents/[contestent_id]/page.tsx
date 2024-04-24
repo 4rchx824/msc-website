@@ -40,7 +40,7 @@ const Page = () => {
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center bg-[#E7E7E7]">
-      <div className="mt-12 flex w-full max-w-5xl flex-col space-y-8 rounded-xl bg-white p-4">
+      <div className="my-12 flex w-full max-w-5xl flex-col space-y-8 rounded-xl bg-white p-4">
         <h1 className="text-center font-sansation-bold text-4xl text-primary-blue">
           {contestent?.name}
         </h1>
