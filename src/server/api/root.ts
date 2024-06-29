@@ -4,6 +4,7 @@ import { categoryRouter } from "./routers/category";
 import { recordRouter } from "./routers/records";
 import { disciplineRouter } from "./routers/disciplines";
 import { contestentRouter } from "./routers/contestent";
+import { sborRouter } from "./routers/sbor";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   records: recordRouter,
   disciplines: disciplineRouter,
   contestents: contestentRouter,
+  sbor: sborRouter,
 });
 
 // export type definition of API

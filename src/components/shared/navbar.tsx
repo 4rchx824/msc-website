@@ -6,20 +6,33 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import RecordsDropdown from "./navbar/records-dropdown";
+import { useEffect, useState } from "react";
+import path from "path";
 
 const navigation = [
-  { name: "About Us", href: "/", current: true },
+  { name: "About Us", href: "/", current: false },
   { name: "Competitions", href: "/competitions", current: false },
   { name: "Records", href: "/records", current: false },
   { name: "Contact Us", href: "/#contact", current: false },
 ];
 
+export type NavbarItem = (typeof navigation)[number];
+
 export default function Navbar() {
   const pathname = usePathname();
+  const [nav, setNav] = useState(navigation);
 
-  navigation.forEach((n) =>
-    n.href === pathname ? (n.current = true) : (n.current = false),
-  );
+  useEffect(() => {
+    const new_nav = nav.map((item) => {
+      return {
+        ...item,
+        current: item.href === "/" ? pathname === "/" ? true : false : pathname.includes(item.href),
+      };
+    });
+    setNav(new_nav);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   return (
     <Disclosure as="nav">
@@ -51,21 +64,27 @@ export default function Navbar() {
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   <div className="flex space-x-6">
-                    {navigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={cn([
-                          item.current
-                            ? "!border-y-2 !border-primary-blue !text-primary-blue"
-                            : "hover:border-y-2 hover:border-primary-blue hover:text-primary-blue",
-                          "border-y-2 border-transparent px-3 py-1 font-sansation-bold text-base",
-                        ])}
-                        aria-current={item.current ? "page" : undefined}
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                    {nav.map((item) => {
+                      if (item.href === "/records") {
+                        return <RecordsDropdown key={item.name} item={item} />;
+                      } else {
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className={cn([
+                              item.current
+                                ? "!border-y-2 !border-primary-blue !text-primary-blue"
+                                : "hover:border-y-2 hover:border-primary-blue hover:text-primary-blue",
+                              "border-y-2 border-transparent px-3 py-1 font-sansation-bold text-base transition-all",
+                            ])}
+                            aria-current={item.current ? "page" : undefined}
+                          >
+                            {item.name}
+                          </Link>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
               </div>
@@ -74,7 +93,7 @@ export default function Navbar() {
 
           <Disclosure.Panel className="rounded-b-2xl bg-white shadow-md sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item) => (
+              {nav.map((item) => (
                 <Disclosure.Button
                   key={item.name}
                   as="a"

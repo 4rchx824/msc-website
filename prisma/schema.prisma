@@ -63,14 +63,18 @@ model Contestent {
   cuid   String   @id @default(cuid())
   name   String
   Record Record[]
+  SBOR_Record SBOR_Record[]
+
+  // ContestentSBOR_Record Contestent_SBOR_Record[]
 }
 
 model Category {
-  cuid        String        @id @default(cuid())
-  name        String
-  img_url     String?
-  Competition Competition[]
-  Discipline  Discipline[]
+  cuid          String          @id @default(cuid())
+  name          String
+  img_url       String?
+  Competition   Competition[]
+  Discipline    Discipline[]
+  SBOR_Category SBOR_Category[]
 }
 
 model Discipline {
@@ -126,4 +130,46 @@ model Record {
   competition    Competition? @relation(fields: [competition_id], references: [cuid])
 
   @@unique([contestent_id, discipline_id, competition_id])
+}
+
+model SBOR_Category {
+  cuid String @id @default(cuid())
+  name String
+  sbor_record  SBOR_Record[]
+
+  category_id String?
+  Category     Category?     @relation(fields: [category_id], references: [cuid])
+}
+
+model SBOR_RecordCategory {
+  cuid String @id @default(cuid())
+  name String
+
+  sbor_record SBOR_Record[]
+}
+
+// model Contestent_SBOR_Record {
+//   record_id String
+//   record    SBOR_Record @relation(fields: [record_id], references: [cuid])
+
+//   contestent_id String
+//   contestent    Contestent @relation(fields: [contestent_id], references: [cuid])
+
+//   @@id([record_id, contestent_id])
+// }
+
+model SBOR_Record {
+  cuid    String   @id @default(cuid())
+  record  String
+  remarks String?
+  date    DateTime
+  img_url String?
+  link    String?
+  contestent Contestent[]
+
+  record_category_id String
+  record_category    SBOR_RecordCategory @relation(fields: [record_category_id], references: [cuid])
+
+  category_id String
+  category    SBOR_Category @relation(fields: [category_id], references: [cuid])
 }

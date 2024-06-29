@@ -8,7 +8,8 @@ import { SearchIcon } from "lucide-react";
 import CompetitionCard from "./CompetitionCard";
 
 import type { CompetitionSearchOptions } from "../page";
-import CompetitionResultPagination from "@/components/shared/CustomPagination";
+import CompetitionResultPagination from "@/components/shared/custom-pagination";
+import useDebounce from "@/lib/useDebounce";
 
 type Props = {
   categories: Category[];
@@ -16,17 +17,18 @@ type Props = {
 };
 
 const CompetitonSearch = ({ categories, searchOptions }: Props) => {
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 1000);
   const [search, setSearch] = useState({
     categoryId: searchOptions.category_id,
     page: searchOptions.page,
-    query: searchOptions.query,
   });
 
   const { data, isLoading } = api.competitions.search.useQuery({
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     category_id: search.categoryId!,
     page: search.page,
-    query: search.query,
+    query: debouncedQuery,
   });
 
   const setCategoryId = (id: string) => {
@@ -40,13 +42,6 @@ const CompetitonSearch = ({ categories, searchOptions }: Props) => {
     setSearch({
       ...search,
       page,
-    });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch({
-      ...search,
-      [e.target.name]: e.target.value,
     });
   };
 
@@ -86,9 +81,8 @@ const CompetitonSearch = ({ categories, searchOptions }: Props) => {
             disabled={categories.length === 0}
             placeholder="Search"
             className="!border-0 !ring-0 !ring-offset-0"
-            value={search.query}
-            name="query"
-            onChange={handleInputChange}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
         </form>
 

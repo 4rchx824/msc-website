@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import RecordRow from "./RecordRow";
-import CustomPagination from "@/components/shared/CustomPagination";
+import CustomPagination from "@/components/shared/custom-pagination";
 import type { OmittedDiscipline } from "./RecordFilter";
 
 type Props = {

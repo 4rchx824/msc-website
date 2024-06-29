@@ -10,6 +10,8 @@ const config = {
     images: {
         remotePatterns: [{
             hostname: "res.cloudinary.com"
+        }, {
+          hostname: "singaporerecords.com"
         }]
     }
 };

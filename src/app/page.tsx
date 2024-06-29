@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { api } from "@/trpc/server";
 import type { Category } from "@prisma/client";
-import { RocketIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
 import ContactUs from "./_components/ContactUs";
+import CategoryCard from "./_components/category-card";
 
 export type PartialCategory = Partial<Category>;
 
@@ -121,39 +120,7 @@ export default async function Home() {
 
             <div className="grid w-max grid-cols-1 place-items-center gap-8 self-center sm:grid-cols-2">
               {categories.map((c) => (
-                <button
-                  key={c.cuid}
-                  className={cn([
-                    "flex h-[275px] w-[275px] flex-col items-center justify-center space-y-4 rounded-3xl border py-8",
-                    c.name !== "TBC"
-                      ? "cursor-pointer shadow-lg transition-shadow hover:shadow-xl"
-                      : "cursor-default ",
-                  ])}
-                >
-                  {c.img_url ? (
-                    <Image
-                      alt="Icon"
-                      className="h-[150px] w-[150px] object-contain object-center"
-                      src={c.img_url ?? ""}
-                      width={200}
-                      height={200}
-                    />
-                  ) : (
-                    <RocketIcon
-                      width={150}
-                      height={150}
-                      className="text-gray-300"
-                    />
-                  )}
-                  <h1
-                    className={cn([
-                      "w-full truncate overflow-ellipsis px-8 font-sansation-bold text-3xl",
-                      c.name === "TBC" ? "text-gray-400" : "",
-                    ])}
-                  >
-                    {c.name}
-                  </h1>
-                </button>
+                <CategoryCard key={c.cuid} c={c} />
               ))}
             </div>
           </div>

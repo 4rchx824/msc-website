@@ -27,4 +27,16 @@ export const categoryRouter = createTRPCRouter({
       
       return records;
     }),
+  findOne: publicProcedure.input(z.object({
+    id: z.string()
+  })).query(({ input, ctx }) => {
+    return ctx.db.category.findFirst({
+      where: {
+        cuid: input.id,
+      },
+      include: {
+        SBOR_Category: true,
+      }
+    });
+  })
 });

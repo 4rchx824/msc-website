@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import RecordRow from "./_components/RecordRow";
+import RecordRow from "../_components/RecordRow";
 
 export const dynamic = "force-dynamic";
 

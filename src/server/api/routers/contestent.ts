@@ -131,14 +131,14 @@ export const contestentRouter = createTRPCRouter({
               LEVEL_1: 20,
               LEVEL_2: 35,
               LEVEL_3: 50,
-              LEVEL_4: 85,
+              LEVEL_4: 75,
               LEVEL_5: 100,
             },
             Cards: {
-              LEVEL_1: 12,
-              LEVEL_2: 24,
-              LEVEL_3: 36,
-              LEVEL_4: 46,
+              LEVEL_1: 10,
+              LEVEL_2: 16,
+              LEVEL_3: 24,
+              LEVEL_4: 38,
               LEVEL_5: 52,
             },
             Names: {
@@ -185,18 +185,62 @@ export const contestentRouter = createTRPCRouter({
         }
       };
 
-      const raw: { Raw: number; Discipline: string }[] = await ctx.db.$queryRaw`
-        SELECT 
-          MAX(r."raw_score") as "Raw",
-          d."name" as "Discipline"
-        FROM 
-          "Record" "r", "Discipline" "d" 
-        WHERE 
-          r."discipline_id" = d."cuid" 
-          AND d."name" IN ('Images', 'Cards', 'Names', 'Numbers', 'Words') 
-          AND r."contestent_id" = ${input.contestentId}
-        GROUP BY d."name"
-      `;
+      const hardcoded_discipline_ids = [
+        {
+          cuid: "clufccdbo000d51jwaxtl85b5",
+          name: Discipline.Images,
+        },
+        {
+          cuid: "clufccdbn000951jw12sspwsu",
+          name: Discipline.Cards,
+        },
+        {
+          cuid: "clufccdbo000h51jw691yoad8",
+          name: Discipline.Names,
+        },
+        {
+          cuid: "clufccdbo000g51jwssrw1vjj",
+          name: Discipline.Numbers,
+        },
+        {
+          cuid: "clufccdbn000a51jwyj1xvycr",
+          name: Discipline.Words,
+        },
+      ];
+
+      // const raw: { Raw: number; Discipline: string }[] = await ctx.db.$queryRaw`
+      //   SELECT
+      //     MAX(r."raw_score") as "Raw",
+      //     d."name" as "Discipline"
+      //   FROM
+      //     "Record" "r", "Discipline" "d"
+      //   WHERE
+      //     r."discipline_id" = d."cuid"
+      //     AND d."name" IN ('Images', 'Cards', 'Names', 'Numbers', 'Words')
+      //     AND r."contestent_id" = ${input.contestentId}
+      //   GROUP BY d."name"
+      // `;
+
+      const raw = await Promise.all(
+        hardcoded_discipline_ids.map(async (d) => {
+          const score = await ctx.db.record.findFirst({
+            where: {
+              contestent_id: input.contestentId,
+              discipline_id: d.cuid,
+            },
+            orderBy: {
+              points: "desc",
+            },
+          });
+
+          return {
+            Raw: score?.raw_score ?? 0,
+            Discipline: d.name,
+          };
+        }),
+      );
+
+      console.log("raw", raw);
 
       const data = raw.map((record) => ({
         level: determine_level(
@@ -221,6 +265,7 @@ export const contestentRouter = createTRPCRouter({
       const data_with_missing_disciplines = Object.keys(
         rankings[Difficulty.Beginner].Ranking,
       ).map((discipline) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         const found = data.find((record) => record.discipline === discipline);
 
         if (found) {
