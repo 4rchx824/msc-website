@@ -115,6 +115,15 @@ export const contestentRouter = createTRPCRouter({
         }),
       );
 
+      let num_nulls = 0;
+      for (const record of records_with_rank) {
+        if (!record) num_nulls++;
+      }
+      
+      if (num_nulls === records_with_rank.length) {
+        return null;
+      }
+
       return records_with_rank;
     }),
   getChartData: publicProcedure

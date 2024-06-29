@@ -30,9 +30,26 @@ const SBORCard = ({ record }: Props) => {
           {record.record}
         </h1>
 
-        <p className="text-gray-600">{record.remarks}</p>
+        <p className="text-sm text-gray-600">{record.remarks}</p>
 
-        <p className="text-gray-00 pt-4 text-xs">
+        <div className="flex flex-wrap py-2">
+          {record.contestent.map((c, index) => (
+            <>
+              <Link
+                key={c.cuid}
+                href={`/contestents/${c.cuid}`}
+                className="transition-all hover:underline"
+              >
+                {c.name}
+              </Link>
+              {index !== record.contestent.length - 1 ? (
+                <span className="text-gray-600">,&nbsp;</span>
+              ) : record.contestent.length > 1 && "."}
+            </>
+          ))}
+        </div>
+
+        <p className="text-xs text-gray-600">
           {dayjs(record.date).format("DD MMM YYYY")}
         </p>
         <div className="flex items-center space-x-2 pb-2 pt-2">
@@ -43,7 +60,11 @@ const SBORCard = ({ record }: Props) => {
             {record.record_category.name}
           </Badge>
         </div>
-        <Link href={record.link ?? ""} className="mb-2 mt-4 flex items-center space-x-1 rounded-md hover:text-primary-blue transition-colors justify-end" target="_blank">
+        <Link
+          href={record.link ?? ""}
+          className="mb-2 mt-4 flex items-center justify-end space-x-1 rounded-md transition-colors hover:text-primary-blue"
+          target="_blank"
+        >
           <h1>Read More</h1> <ArrowRight className="h-4 w-4" />
         </Link>
       </div>

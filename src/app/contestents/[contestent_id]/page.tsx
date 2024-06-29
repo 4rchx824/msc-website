@@ -38,6 +38,7 @@ const Page = () => {
       contestentId: contestent_id,
     }) as { data: PersonalRecord[]; isLoading: boolean };
 
+    console.log(records)
   return (
     <div className="flex min-h-[100dvh] flex-col items-center bg-[#E7E7E7]">
       <div className="my-12 flex w-full max-w-5xl flex-col space-y-8 rounded-xl bg-white p-4">
@@ -99,17 +100,25 @@ const Page = () => {
                 <TableHead className="w-max font-sansation-bold">
                   Discipline
                 </TableHead>
-                <TableHead className="font-sansation-bold text-center">Raw</TableHead>
-                <TableHead className="font-sansation-bold text-center">Time</TableHead>
-                <TableHead className="font-sansation-bold text-center">Points</TableHead>
+                <TableHead className="text-center font-sansation-bold">
+                  Raw
+                </TableHead>
+                <TableHead className="text-center font-sansation-bold">
+                  Time
+                </TableHead>
+                <TableHead className="text-center font-sansation-bold">
+                  Points
+                </TableHead>
                 <TableHead className="w-max font-sansation-bold">
                   Competition
                 </TableHead>
-                <TableHead className="font-sansation-bold text-center">Rank</TableHead>
+                <TableHead className="text-center font-sansation-bold">
+                  Rank
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {records.map((record) => (
+              {records?.map((record) => (
                 <RecordRow key={record.cuid} record={record} />
               ))}
             </TableBody>
