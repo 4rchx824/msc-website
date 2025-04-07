@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { Reorder } from "framer-motion";
 
 export const sborRouter = createTRPCRouter({
   searchRecord: publicProcedure
@@ -15,27 +16,29 @@ export const sborRouter = createTRPCRouter({
       let records: { cuid: string; remarks: string | null }[];
       if (input.sbor_category_id === "ALL") {
         records = await ctx.db.$queryRaw`
-          SELECT "cuid", "remarks"
+          SELECT "cuid", "remarks", "date"
           FROM "SBOR_Record"
           WHERE ("record", "date") IN (
               SELECT "record", MAX("date")
               FROM "SBOR_Record"
-              WHERE "record" ILIKE ${'%' + input.record_title + '%'}   
-              GROUP BY "record"
-          );
-        `;
+              WHERE "record" ILIKE ${`%${input.record_title}%`}   
+              GROUP BY "record", "date"
+          )
+          ORDER BY "date" DESC
+          `;
       } else {
         records = await ctx.db.$queryRaw`
-        SELECT "cuid", "remarks"
+        SELECT "cuid", "remarks", "date"
         FROM "SBOR_Record"
         WHERE ("record", "date") IN (
             SELECT "record", MAX("date")
             FROM "SBOR_Record"
             WHERE "category_id" = ${input.sbor_category_id}
-              AND "record" ILIKE ${'%' + input.record_title + '%'}   
-            GROUP BY "record"
-        );
-    `;
+              AND "record" ILIKE ${`%${input.record_title}%`}   
+            GROUP BY "record", "date"
+        )
+        ORDER BY "date" DESC
+        `;
       }
 
       const records_with_contestent = await Promise.all(
@@ -51,6 +54,7 @@ export const sborRouter = createTRPCRouter({
             },
           });
 
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
           return record!;
         }),
       );

@@ -38,6 +38,7 @@ const SBORResults = ({ category }: Props) => {
 
         <div className="flex flex-wrap items-center justify-center space-x-2 pt-4">
           <button
+            type="button"
             onClick={() => setRecordCategoryId("ALL")}
             className={cn([
               "my-1 rounded-md bg-gray-200 px-12 py-2 font-sansation-bold hover:opacity-90",
@@ -49,6 +50,7 @@ const SBORResults = ({ category }: Props) => {
 
           {category?.SBOR_Category.map((c) => (
             <button
+              type="button"
               key={c.cuid}
               onClick={() => setRecordCategoryId(c.cuid)}
               className={cn([
@@ -78,9 +80,7 @@ const SBORResults = ({ category }: Props) => {
 
         {!isLoading && (
           <div className="grid grid-cols-1 gap-9 sm:grid-cols-3">
-            {(data ?? []).map((r) => (
-              <SBORCard record={r} key={r.cuid} />
-            ))}
+            {(data ?? []).map((r) => r && <SBORCard record={r} key={r.cuid} />)}
           </div>
         )}
 

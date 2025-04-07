@@ -34,9 +34,8 @@ const SBORCard = ({ record }: Props) => {
 
         <div className="flex flex-wrap py-2">
           {record.contestent.map((c, index) => (
-            <>
+            <div key={c.cuid} className="flex items-center">
               <Link
-                key={c.cuid}
                 href={`/contestents/${c.cuid}`}
                 className="transition-all hover:underline"
               >
@@ -44,8 +43,10 @@ const SBORCard = ({ record }: Props) => {
               </Link>
               {index !== record.contestent.length - 1 ? (
                 <span className="text-gray-600">,&nbsp;</span>
-              ) : record.contestent.length > 1 && "."}
-            </>
+              ) : (
+                record.contestent.length > 1 && "."
+              )}
+            </div>
           ))}
         </div>
 
