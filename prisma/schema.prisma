@@ -103,7 +103,7 @@ model CompetitionDiscipline {
 model Competition {
   cuid    String   @id @default(cuid())
   name    String
-  date    DateTime
+  date    DateTime @default(now())
   img_url String?
 
   category   Category @relation(fields: [categoryId], references: [cuid])
@@ -162,7 +162,7 @@ model SBOR_Record {
   cuid    String   @id @default(cuid())
   record  String
   remarks String?
-  date    DateTime
+  date    DateTime @default(now())
   img_url String?
   link    String?
   contestent Contestent[]

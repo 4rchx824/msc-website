@@ -13,17 +13,20 @@ export const sborRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx }) => {
       let records: { cuid: string; remarks: string | null }[];
+      
       if (input.sbor_category_id === "ALL") {
         records = await ctx.db.$queryRaw`
-          SELECT "cuid", "remarks", "date"
-          FROM "SBOR_Record"
-          WHERE ("record", "date") IN (
-              SELECT "record", MAX("date")
-              FROM "SBOR_Record"
-              WHERE "record" ILIKE ${`%${input.record_title}%`}   
-              GROUP BY "record", "date"
-          )
-          ORDER BY "date" DESC
+          SELECT t1."cuid", t1."remarks", t1."date"
+          FROM "SBOR_Record" t1, "SBOR_Category" t2
+          WHERE t1."category_id" = t2."cuid"     
+            AND t2."category_id" = ${input.category_id} 
+            AND (t1."record", t1."date") IN (
+                SELECT "record", MAX("date")
+                FROM "SBOR_Record"
+                WHERE "record" ILIKE ${`%${input.record_title}%`}
+                GROUP BY "record"
+            )
+          ORDER BY t1."date" DESC
           `;
       } else {
         records = await ctx.db.$queryRaw`
@@ -34,7 +37,7 @@ export const sborRouter = createTRPCRouter({
             FROM "SBOR_Record"
             WHERE "category_id" = ${input.sbor_category_id}
               AND "record" ILIKE ${`%${input.record_title}%`}   
-            GROUP BY "record", "date"
+            GROUP BY "record"
         )
         ORDER BY "date" DESC
         `;

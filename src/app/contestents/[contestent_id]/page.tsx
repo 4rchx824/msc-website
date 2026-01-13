@@ -38,7 +38,6 @@ const Page = () => {
       contestentId: contestent_id,
     }) as { data: PersonalRecord[]; isLoading: boolean };
 
-    console.log(records)
   return (
     <div className="flex min-h-[100dvh] flex-col items-center bg-[#E7E7E7]">
       <div className="my-12 flex w-full max-w-5xl flex-col space-y-8 rounded-xl bg-white p-4">

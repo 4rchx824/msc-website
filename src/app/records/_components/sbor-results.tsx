@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import type { appRouter } from "@/server/api/root";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import useDebounce from "@/lib/useDebounce";
 import SBORCard from "./sbor-card";
 
@@ -18,7 +18,11 @@ type Props = {
 };
 
 const SBORResults = ({ category }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sbor_category_id = searchParams.get("sbor_category_id");
   const { category_id }: { category_id: string } = useParams();
+
   const [recordCategoryId, setRecordCategoryId] = useState<string>("ALL");
   const [recordName, setRecordName] = useState<string>("");
   const debouncedInput = useDebounce(recordName, 1000);
@@ -28,6 +32,17 @@ const SBORResults = ({ category }: Props) => {
     category_id: category_id,
     record_title: debouncedInput,
   });
+
+  useEffect(() => {
+    if (sbor_category_id) {
+      setRecordCategoryId(sbor_category_id);
+      router.push(
+        `/records/${category_id}?sbor_category_id=${sbor_category_id}`,
+      );
+    } else {
+      setRecordCategoryId("ALL");
+    }
+  }, [sbor_category_id, category_id, router]);
 
   return (
     <div className="flex w-full max-w-5xl flex-col py-8 ">
@@ -39,20 +54,26 @@ const SBORResults = ({ category }: Props) => {
         <div className="flex flex-wrap items-center justify-center space-x-2 pt-4">
           <button
             type="button"
-            onClick={() => setRecordCategoryId("ALL")}
+            onClick={() =>
+              router.push(`/records/${category_id}?sbor_category_id=ALL`)
+            }
             className={cn([
               "my-1 rounded-md bg-gray-200 px-12 py-2 font-sansation-bold hover:opacity-90",
               recordCategoryId === "ALL" ? "bg-primary-blue text-white" : "",
             ])}
           >
-            Overall
+            All
           </button>
 
           {category?.SBOR_Category.map((c) => (
             <button
               type="button"
               key={c.cuid}
-              onClick={() => setRecordCategoryId(c.cuid)}
+              onClick={() =>
+                router.push(
+                  `/records/${category_id}?sbor_category_id=${c.cuid}`,
+                )
+              }
               className={cn([
                 "my-1 rounded-md bg-gray-200 px-12 py-2 font-sansation-bold hover:opacity-90",
                 recordCategoryId === c.cuid ? "bg-primary-blue text-white" : "",
@@ -64,7 +85,10 @@ const SBORResults = ({ category }: Props) => {
         </div>
       </div>
       <div className="mt-12 flex flex-col items-center space-y-4 rounded-xl bg-white p-4">
-        <form className="flex w-full items-center justify-center rounded-md border px-2">
+        <form
+          className="flex w-full items-center justify-center rounded-md border px-2"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <SearchIcon size={24} className="stroke-1" />
           <Input
             disabled={category?.SBOR_Category.length === 0}

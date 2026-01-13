@@ -10,6 +10,7 @@ const Page = () => {
   const { data, isLoading } = api.categories.findOne.useQuery({
     id: category_id,
   });
+  
   return (
     <div className="flex min-h-[100dvh] w-full flex-col items-center bg-[#E7E7E7]">
       {isLoading ? (

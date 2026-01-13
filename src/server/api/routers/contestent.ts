@@ -124,7 +124,15 @@ export const contestentRouter = createTRPCRouter({
         return null;
       }
 
-      return records_with_rank;
+      let filtered_records = records_with_rank.filter((record) => record !== undefined);
+
+
+      // remove records with duplicate cuid
+      filtered_records = filtered_records.filter((record, index, self) =>
+        index === self.findIndex((r) => r.cuid === record.cuid)
+      );
+
+      return filtered_records;
     }),
   getChartData: publicProcedure
     .input(
@@ -248,8 +256,6 @@ export const contestentRouter = createTRPCRouter({
           };
         }),
       );
-
-      console.log("raw", raw);
 
       const data = raw.map((record) => ({
         level: determine_level(

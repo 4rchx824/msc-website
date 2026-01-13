@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/trpc/react";
-import { useParams } from "next/navigation";
-import React from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 import RecordFilter, {
   type OmittedDiscipline,
 } from "./_components/RecordFilter";
@@ -11,6 +11,7 @@ import RecordResults from "./_components/RecordResults";
 
 const Page = () => {
   const { competition_id }: { competition_id: string } = useParams();
+  const searchParams = useSearchParams();
 
   const { data: competition, isLoading } = api.competitions.findOne.useQuery({
     competitonId: competition_id,
@@ -20,10 +21,25 @@ const Page = () => {
     competitionId: competition?.cuid ?? "",
   });
 
+  const discipline_id = searchParams.get("discipline_id");
+
   const [discipline, setDiscipline] = React.useState<OmittedDiscipline>({
     cuid: "OVERALL",
     name: "OVERALL",
   });
+
+  useEffect(() => {
+    const found_discipline = disciplines?.find((d) => d.cuid === discipline_id);
+
+    if (discipline_id === "OVERALL") {
+      setDiscipline({
+        cuid: "OVERALL",
+        name: "OVERALL",
+      });
+    } else if (found_discipline) {
+      setDiscipline(found_discipline);
+    }
+  }, [discipline_id, disciplines]);
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col items-center bg-[#E7E7E7]">
@@ -43,7 +59,6 @@ const Page = () => {
             competition={competition}
             disciplines={disciplines}
             discipline={discipline}
-            setDiscipline={setDiscipline}
           />
 
           <RecordResults discipline={discipline} competition={competition} />

@@ -16,7 +16,7 @@ function RecordRow({ record }: Props) {
   return (
     <TableRow>
       <TableCell className="font-sansation text-primary-blue underline">
-        <Link href={`/records/${record.discipline_id}`}>{record.discipline_name}</Link>
+        <Link href={`/competitions/${record.competition_id}?discipline_id=${record.discipline_id}`}>{record.discipline_name}</Link>
       </TableCell>
       <TableCell className="text-center font-sansation">
         {record.raw_score}

@@ -58,6 +58,7 @@ export const competitionRouter = createTRPCRouter({
           categoryId: input.category_id,
           name: {
             contains: input.query,
+            mode: "insensitive",
           },
         },
         include: {

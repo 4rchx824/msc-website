@@ -75,7 +75,10 @@ const CompetitonSearch = ({ categories, searchOptions }: Props) => {
       </div>
 
       <div className="mt-12 flex flex-col items-center space-y-4 rounded-xl bg-white p-4">
-        <form className="flex w-full items-center justify-center rounded-md border px-2">
+        <form
+          className="flex w-full items-center justify-center rounded-md border px-2"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <SearchIcon size={24} className="stroke-1" />
           <Input
             disabled={categories.length === 0}
